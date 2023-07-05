@@ -15,11 +15,6 @@ class StudentCatalogView(APIView):
     permission_classes=[IsAuthenticated]
     authentication_classes=[TokenAuthentication]
 
-    def get(self,request):
-        queryset = Student.objects.all()
-        serializer = StudentDataSerializer(queryset , many=True)
-        return Response(serializer.data)
-    
     def post(self , request):
         data = request.data
         serializer = StudentDataSerializer(data=data)
@@ -27,7 +22,7 @@ class StudentCatalogView(APIView):
             serializer.save()
 
             return Response(serializer.data)
-
+        
         return Response(serializer.errors) 
     
     def patch(self,request):
@@ -49,6 +44,30 @@ class StudentCatalogView(APIView):
         obj.delete()
 
         return Response({'message':'Student details have been deleted'})
+
+
+class ParticularStudentView(APIView):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+    
+    def get(self, request , id):
+        try:
+            student_data = Student.objects.get(id=id)
+            serializer = StudentDataSerializer(student_data)
+            return Response(serializer.data)
+        except:
+            return Response({"message":"Student do not exist"})        
+
+
+class AllStudentView(APIView):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+    def get(self , request):
+        queryset = Student.objects.all()
+        serializer = StudentDataSerializer(queryset , many=True)
+        return Response(serializer.data)
 
 
 
